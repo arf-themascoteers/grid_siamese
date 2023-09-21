@@ -42,7 +42,6 @@ class ANNShared(nn.Module):
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
         x2 = x2.reshape(x2.shape[0],-1)
-        x2 = torch.cat((x2,x[:,0,:]), dim=1)
         x2 = self.linear2(x2)
         return x2
 
