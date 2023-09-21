@@ -32,9 +32,9 @@ class ANN2(nn.Module):
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(27, 10),
+            nn.Linear(27, 20),
             nn.LeakyReLU(),
-            nn.Linear(10, 1)
+            nn.Linear(20, 1)
         )
 
     def forward(self, x):
