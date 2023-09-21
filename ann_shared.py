@@ -26,18 +26,18 @@ class ANNShared(nn.Module):
         self.linear1 = nn.Sequential(
             nn.Linear(12, 10),
             nn.LeakyReLU(),
-            nn.Linear(10, 2)
+            nn.Linear(10, 3)
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(30, 20),
+            nn.Linear(27, 20),
             nn.LeakyReLU(),
             nn.Linear(20, 1)
         )
 
     def forward(self, x):
         x = x.reshape(x.shape[0],9,12)
-        x2 = torch.zeros((x.shape[0],9,2))
+        x2 = torch.zeros((x.shape[0],9,3))
         x2 = x2.to(self.device)
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
