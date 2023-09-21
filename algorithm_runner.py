@@ -1,7 +1,7 @@
 import torch
 from ann import ANN
-from ann2 import ANN2
-from ann3 import ANN3
+from ann_shared import ANNShared
+from ann_skip import ANNSkip
 from ann_es import ANNEarlyStop
 from siamese import Siamese
 from sklearn.linear_model import LinearRegression
@@ -28,12 +28,12 @@ class AlgorithmRunner:
             y_hats = model_instance.test()
         elif algorithm == "ann_shared":
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            model_instance = ANN2(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
+            model_instance = ANNShared(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
             y_hats = model_instance.test()
         elif algorithm == "ann_skip":
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            model_instance = ANN3(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
+            model_instance = ANNSkip(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
             y_hats = model_instance.test()
         elif algorithm == "ann_es":

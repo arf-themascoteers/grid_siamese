@@ -26,8 +26,6 @@ class ANNShared(nn.Module):
         self.linear1 = nn.Sequential(
             nn.Linear(12, 10),
             nn.LeakyReLU(),
-            nn.Linear(10, 10),
-            nn.LeakyReLU(),
             nn.Linear(10, 2)
         )
 
