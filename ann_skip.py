@@ -24,38 +24,29 @@ class ANNSkip(nn.Module):
         self.lr = 0.01
 
         self.linear1 = nn.Sequential(
-            nn.Linear(12, 20),
+            nn.Linear(12, 10),
             nn.LeakyReLU(),
-            nn.Linear(20, 10)
+            nn.Linear(10, 12)
         )
 
         self.linear2 = nn.Sequential(
+            nn.Linear(24, 10),
             nn.LeakyReLU(),
-            nn.Linear(10, 10)
-        )
-
-        self.linear3 = nn.Sequential(
-            nn.Linear(20, 20),
-            nn.LeakyReLU(),
-            nn.Linear(20, 1)
+            nn.Linear(10, 1)
         )
 
     def forward(self, x):
         x = x.reshape(x.shape[0], 9, 12)
-        x2 = torch.zeros((x.shape[0], 9, 10))
+        x_original = x[:, 0]
+        x2 = torch.zeros((x.shape[0], 9, 12))
         x2 = x2.to(self.device)
         for i in range(x.shape[1]):
             x2[:, i] = self.linear1(x[:, i])
-        x2_original = x2[:, 0]
-        x3 = torch.zeros((x.shape[0], 9, 10))
-        x3 = x3.to(self.device)
-        for i in range(x.shape[1]):
-            x3[:, i] = self.linear2(x2[:, i])
 
-        x3 = torch.mean(x2,dim=1)
-        x3 = torch.cat((x3,x2_original), dim=1)
-        x3 = self.linear3(x3)
-        return x3
+        x2 = torch.mean(x2, dim=1)
+        x2 = torch.cat((x2,x_original), dim=1)
+        x2 = self.linear2(x2)
+        return x2
 
     def train_model(self):
         if self.TEST:
