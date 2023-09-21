@@ -1,5 +1,5 @@
 from fold_evaluator import FoldEvaluator
 
 if __name__ == "__main__":
-    c = FoldEvaluator(prefix="ann3", folds=10, algorithms=["ann3"])
+    c = FoldEvaluator(prefix="shared", folds=10, algorithms=["ann_shared"])
     c.process()

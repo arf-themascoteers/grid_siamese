@@ -9,7 +9,7 @@ from soil_dataset import SoilDataset
 from time import time
 
 
-class ANN3(nn.Module):
+class ANNShared(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y):
         super().__init__()
         torch.manual_seed(1)
@@ -32,7 +32,7 @@ class ANN3(nn.Module):
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(18, 20),
+            nn.Linear(30, 20),
             nn.LeakyReLU(),
             nn.Linear(20, 1)
         )
@@ -44,7 +44,7 @@ class ANN3(nn.Module):
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
         x2 = x2.reshape(x2.shape[0],-1)
-        #x2 = torch.cat((x2,x[:,0,:]), dim=1)
+        x2 = torch.cat((x2,x[:,0,:]), dim=1)
         x2 = self.linear2(x2)
         return x2
 

@@ -9,7 +9,7 @@ from soil_dataset import SoilDataset
 from time import time
 
 
-class ANN2(nn.Module):
+class ANNSkip(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y):
         super().__init__()
         torch.manual_seed(1)
@@ -19,20 +19,18 @@ class ANN2(nn.Module):
         self.train_ds = SoilDataset(train_x, train_y)
         self.test_ds = SoilDataset(test_x, test_y)
         self.validation_ds = SoilDataset(validation_x, validation_y)
-        self.num_epochs = 3000
+        self.num_epochs = 1000
         self.batch_size = 3000
         self.lr = 0.01
 
         self.linear1 = nn.Sequential(
             nn.Linear(12, 10),
             nn.LeakyReLU(),
-            nn.Linear(10, 10),
-            nn.LeakyReLU(),
             nn.Linear(10, 2)
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(30, 20),
+            nn.Linear(18, 20),
             nn.LeakyReLU(),
             nn.Linear(20, 1)
         )
@@ -44,7 +42,7 @@ class ANN2(nn.Module):
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
         x2 = x2.reshape(x2.shape[0],-1)
-        x2 = torch.cat((x2,x[:,0,:]), dim=1)
+        #x2 = torch.cat((x2,x[:,0,:]), dim=1)
         x2 = self.linear2(x2)
         return x2
 

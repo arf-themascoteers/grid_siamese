@@ -26,12 +26,12 @@ class AlgorithmRunner:
             model_instance = ANN(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
             y_hats = model_instance.test()
-        elif algorithm == "ann2":
+        elif algorithm == "ann_shared":
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model_instance = ANN2(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
             y_hats = model_instance.test()
-        elif algorithm == "ann3":
+        elif algorithm == "ann_skip":
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model_instance = ANN3(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
