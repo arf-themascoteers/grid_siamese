@@ -5,15 +5,16 @@ from sklearn import model_selection
 from s2_bands import S2Bands
 
 
-class FoldDSManager:
+class DSManager:
     def __init__(self, csv, folds=10):
         torch.manual_seed(0)
         df = pd.read_csv(csv)
-        self.x = S2Bands.get_all_bands()
+        aux = []
+        self.x = aux + ["row_offset"] + ["column_offset"] + S2Bands.get_all_bands()
 
-        cols = []
+        cols = aux
         for i in range(8):
-            for b in S2Bands.get_all_bands():
+            for b in ["row_offset"] + ["column_offset"] + S2Bands.get_all_bands():
                 cols.append(f"{b}_{i}")
 
         self.x = self.x + cols

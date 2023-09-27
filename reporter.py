@@ -3,7 +3,7 @@ import os
 import pandas as pd
 
 
-class FoldReporter:
+class Reporter:
     def __init__(self, prefix, config_list, algorithms, repeat, folds):
         self.prefix = prefix
         self.config_list = config_list

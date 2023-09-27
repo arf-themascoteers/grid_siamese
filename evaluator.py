@@ -1,10 +1,10 @@
 from s2_extractor import S2Extractor
-from fold_reporter import FoldReporter
+from reporter import Reporter
 from algorithm_runner import AlgorithmRunner
-from fold_ds_manager import FoldDSManager
+from ds_manager import DSManager
 
 
-class FoldEvaluator:
+class Evaluator:
     def __init__(self, prefix="", verbose=False, repeat=1, folds=10, algorithms=None):
         self.repeat = repeat
         self.folds = folds
@@ -23,7 +23,7 @@ class FoldEvaluator:
             ml = s2.process()
             self.csvs.append(ml)
 
-        self.reporter = FoldReporter(prefix, self.config_list, self.algorithms, self.repeat, self.folds)
+        self.reporter = Reporter(prefix, self.config_list, self.algorithms, self.repeat, self.folds)
 
     def process(self):
         for repeat_number in range(self.repeat):
@@ -41,7 +41,7 @@ class FoldEvaluator:
 
     def process_config(self, repeat_number, index_algorithm, index_config):
         algorithm = self.algorithms[index_algorithm]
-        ds = FoldDSManager(self.csvs[index_config], folds=self.folds)
+        ds = DSManager(self.csvs[index_config], folds=self.folds)
         for fold_number, (train_x, train_y, test_x, test_y, validation_x, validation_y) in enumerate(ds.get_k_folds()):
             print("CSV: ", self.csvs[index_config])
             r2, rmse = self.reporter.get_details(index_algorithm, repeat_number, fold_number, index_config)

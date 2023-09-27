@@ -66,7 +66,7 @@ class CSVProcessor:
     @classmethod
     def gridify(cls, ag, grid):
         df = pd.read_csv(ag)
-        columns = list(df.columns)
+        columns = ["cell","row","column","counter","som_std","elevation","moisture","temp","som"]
         columns = columns + CSVProcessor.get_neighbour_columns()
 
         dest = pd.DataFrame(columns=columns)
@@ -83,6 +83,8 @@ class CSVProcessor:
             for ind, (i, neighbour) in enumerate(neighbours.iterrows()):
                 for band in S2Bands.get_all_bands():
                     new_row[f"{band}_{ind}"] = neighbour[band]
+                new_row[f"row_offset_{ind}"] = neighbour["row_offset"]
+                new_row[f"column_offset_{ind}"] = neighbour["column_offset"]
             new_df = pd.DataFrame([new_row])
             dest = pd.concat((dest, new_df), axis=0)
 
@@ -114,6 +116,8 @@ class CSVProcessor:
                 if len(filter) == 0:
                     return None
                 filter = filter.iloc[0:1]
+                filter.insert(0,"column_offset",co)
+                filter.insert(0,"row_offset",ro)
                 if neighbours is None:
                     neighbours = filter
                 else:
