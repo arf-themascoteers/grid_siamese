@@ -25,13 +25,13 @@ class ANNWeightedPosition(nn.Module):
         self.linear1 = nn.Sequential(
             nn.Linear(12, 20),
             nn.LeakyReLU(),
-            nn.Linear(20, 10),
-            nn.LeakyReLU(),
-            nn.Linear(10, 1),
+            nn.Linear(20, 1)
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(9, 1),
+            nn.Linear(9, 10),
+            nn.LeakyReLU(),
+            nn.Linear(10, 1)
         )
 
     def forward(self, x):
