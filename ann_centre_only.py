@@ -38,15 +38,9 @@ class ANNCentre(nn.Module):
         x = x[:,len(self.non_band_columns):]
         x = x.reshape(x.shape[0],9,14)
         x = x[:,4,:]
-        # x_bands = x[:,:,0:12]
-        # x_offsets = x[:,:,12:]
-        x2 = torch.zeros((x.shape[0],9,14))
-        x2 = x2.to(self.device)
-        for i in range(x.shape[1]):
-            x2[:,i] = self.linear1(x[:,i])
-        x2 = torch.mean(x2, dim=1)
-        x2 = self.linear2(x2)
-        return x2
+        x = self.linear1(x)
+        x = self.linear2(x)
+        return x
 
     def train_model(self):
         if self.TEST:
