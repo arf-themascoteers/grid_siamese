@@ -37,7 +37,7 @@ class ANNShared(nn.Module):
 
     def forward(self, x):
         x = x.reshape(x.shape[0],9,12)
-        x2 = torch.zeros((x.shape[0],9,12))
+        x2 = torch.zeros((x.shape[0],9,6))
         x2 = x2.to(self.device)
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
