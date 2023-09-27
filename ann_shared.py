@@ -10,7 +10,8 @@ from csv_processor import CSVProcessor
 class ANNShared(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y):
         super().__init__()
-        non_band_columns, band_columns = CSVProcessor.get_grid_columns()
+        self.non_band_columns, self.band_columns = CSVProcessor.get_grid_columns()
+        self.non_band_columns.remove("som")
         self.verbose = False
         self.TEST = False
         self.device = device
@@ -24,7 +25,7 @@ class ANNShared(nn.Module):
         self.linear1 = nn.Sequential(
             nn.Linear(14, 20),
             nn.LeakyReLU(),
-            nn.Linear(20, 12)
+            nn.Linear(20, 14)
         )
 
         self.linear2 = nn.Sequential(
@@ -34,7 +35,10 @@ class ANNShared(nn.Module):
         )
 
     def forward(self, x):
+        x = x[:,len(self.non_band_columns):]
         x = x.reshape(x.shape[0],9,14)
+        # x_bands = x[:,:,0:12]
+        # x_offsets = x[:,:,12:]
         x2 = torch.zeros((x.shape[0],9,14))
         x2 = x2.to(self.device)
         for i in range(x.shape[1]):
