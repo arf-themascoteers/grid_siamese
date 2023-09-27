@@ -47,7 +47,7 @@ class CSVProcessor:
             if col in df.columns:
                 df.drop(inplace=True, columns=[col], axis=1)
         for col in df.columns:
-            if col not in ["scene","row","column","counter","som_std","cell"]:
+            if col not in ["scene","row","column","counter","som_std","cell","row_offset","column_offset"]:
                 scaler = MinMaxScaler()
                 df[col] = scaler.fit_transform(df[[col]])
         return df
@@ -63,30 +63,42 @@ class CSVProcessor:
     def get_geo_columns():
         return ["lon", "lat", "when"]
 
-    @classmethod
-    def gridify(cls, ag, grid):
+    @staticmethod
+    def get_grid_columns():
+        non_band_columns = ["cell","row","column","counter","som_std","elevation","moisture","temp","som"]
+        band_columns = non_band_columns.copy()
+        for i in range(9):
+            band_columns.append(f"row_offset_{i}")
+            band_columns.append(f"column_offset_{i}")
+            for band in S2Bands.get_all_bands():
+                band_columns.append(f"{band}_{i}")
+        return non_band_columns, band_columns
+
+    @staticmethod
+    def gridify(ag, grid):
+        non_band_columns, band_columns = CSVProcessor.get_grid_columns()
         df = pd.read_csv(ag)
-        columns = ["cell","row","column","counter","som_std","elevation","moisture","temp","som"]
-        columns = columns + CSVProcessor.get_neighbour_columns()
-
-        dest = pd.DataFrame(columns=columns)
-
+        dest = None
         for index, row in df.iterrows():
             neighbours = CSVProcessor.get_neighbours(df, row)
-            if neighbours is None or len(neighbours) != 8:
+            if neighbours is None or len(neighbours) != 9:
                 continue
 
             new_row = {}
-            for col in df.columns:
-                new_row[col] = row[col]
+
+            for c in non_band_columns:
+                new_row[c] = row[c]
 
             for ind, (i, neighbour) in enumerate(neighbours.iterrows()):
-                for band in S2Bands.get_all_bands():
-                    new_row[f"{band}_{ind}"] = neighbour[band]
                 new_row[f"row_offset_{ind}"] = neighbour["row_offset"]
                 new_row[f"column_offset_{ind}"] = neighbour["column_offset"]
-            new_df = pd.DataFrame([new_row])
-            dest = pd.concat((dest, new_df), axis=0)
+                for band in S2Bands.get_all_bands():
+                    new_row[f"{band}_{ind}"] = neighbour[band]
+            new_df = pd.DataFrame(columns=non_band_columns+band_columns, data=[new_row])
+            if dest is None:
+                dest = new_df
+            else:
+                dest = pd.concat((dest, new_df), axis=0)
 
         dest = dest.round(4)
         dest.to_csv(grid, index=False)
@@ -105,8 +117,6 @@ class CSVProcessor:
         col_offset = [-1,0,1]
         for ro in row_offset:
             for co in col_offset:
-                if ro == 0 and co == 0:
-                    continue
                 target_row = the_row + ro
                 target_col = the_column + co
                 if scene_fusion:

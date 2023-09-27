@@ -3,21 +3,16 @@ from sklearn.model_selection import KFold
 import torch
 from sklearn import model_selection
 from s2_bands import S2Bands
+from csv_processor import CSVProcessor
 
 
 class DSManager:
     def __init__(self, csv, folds=10):
         torch.manual_seed(0)
+        non_band_columns, band_columns = CSVProcessor.get_grid_columns()
+        non_band_columns.remove("som")
         df = pd.read_csv(csv)
-        aux = []
-        self.x = aux + ["row_offset"] + ["column_offset"] + S2Bands.get_all_bands()
-
-        cols = aux
-        for i in range(8):
-            for b in ["row_offset"] + ["column_offset"] + S2Bands.get_all_bands():
-                cols.append(f"{b}_{i}")
-
-        self.x = self.x + cols
+        self.x = non_band_columns + band_columns
         self.y = "som"
         self.folds = folds
         columns = self.x + [self.y]
