@@ -23,21 +23,15 @@ class ANNWeightedPosition(nn.Module):
         self.lr = 0.01
 
         self.linear1 = nn.Sequential(
-            nn.Linear(12, 10),
+            nn.Linear(12, 20),
             nn.LeakyReLU(),
-            nn.Linear(10, 3)
+            nn.Linear(20, 10),
+            nn.LeakyReLU(),
+            nn.Linear(10, 1),
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(5, 5),
-            nn.LeakyReLU(),
-            nn.Linear(5, 3)
-        )
-
-        self.linear3 = nn.Sequential(
-            nn.Linear(27, 10),
-            nn.LeakyReLU(),
-            nn.Linear(10, 1)
+            nn.Linear(9, 1),
         )
 
     def forward(self, x):
@@ -45,23 +39,15 @@ class ANNWeightedPosition(nn.Module):
         x = x.reshape(x.shape[0],9,14)
         x_bands = x[:,:,0:12]
         x_offsets = x[:,:,12:]
-        x2 = torch.zeros((x.shape[0],9,3))
+        x2 = torch.zeros((x.shape[0],9,1))
         x2 = x2.to(self.device)
 
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x_bands[:,i])
 
-        x2 = torch.cat((x_offsets, x2), dim=2)
-
-        x3 = torch.zeros((x.shape[0],9,3))
-        x3 = x3.to(self.device)
-
-        for i in range(x2.shape[1]):
-            x3[:,i] = self.linear2(x2[:,i])
-
-        x3 = x3.reshape(x3.shape[0],27)
-        x3 = self.linear3(x3)
-        return x3
+        x2 = x2.reshape(x.shape[0],9)
+        x2 = self.linear2(x2)
+        return x2
 
     def train_model(self):
         if self.TEST:
