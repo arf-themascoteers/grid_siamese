@@ -1,18 +1,16 @@
-import os
-
 import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from sklearn.metrics import r2_score
 from soil_dataset import SoilDataset
-from time import time
+from csv_processor import CSVProcessor
 
 
 class ANNShared(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y):
         super().__init__()
-        torch.manual_seed(1)
+        non_band_columns, band_columns = CSVProcessor.get_grid_columns()
         self.verbose = False
         self.TEST = False
         self.device = device

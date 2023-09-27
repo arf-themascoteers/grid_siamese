@@ -14,7 +14,6 @@ class Siamese(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y,
                  band_index_start, band_count, band_repeat):
         super().__init__()
-        torch.manual_seed(1)
         self.verbose = False
         self.TEST = False
         self.device = device
