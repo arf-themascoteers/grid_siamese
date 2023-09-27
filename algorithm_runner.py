@@ -2,6 +2,7 @@ import torch
 from ann_shared import ANNShared
 from ann_centre_only import ANNCentre
 from ann_top_left_only import ANNTopLeft
+from ann_weighted import ANNWeighted
 from sklearn.linear_model import LinearRegression
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.ensemble import RandomForestRegressor
@@ -32,6 +33,11 @@ class AlgorithmRunner:
         elif algorithm == "ann_top_left_only":
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model_instance = ANNTopLeft(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
+            model_instance.train_model()
+            y_hats = model_instance.test()
+        elif algorithm == "ann_weighted":
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model_instance = ANNWeighted(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
             y_hats = model_instance.test()
 
