@@ -7,7 +7,7 @@ from soil_dataset import SoilDataset
 from csv_processor import CSVProcessor
 
 
-class ANNWeighted(nn.Module):
+class ANNWeighted2(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y):
         super().__init__()
         self.non_band_columns, self.band_columns = CSVProcessor.get_grid_columns()
@@ -23,19 +23,21 @@ class ANNWeighted(nn.Module):
         self.lr = 0.01
 
         self.linear1 = nn.Sequential(
-            nn.Linear(12, 20),
+            nn.Linear(12, 10),
             nn.LeakyReLU(),
-            nn.Linear(20, 1)
+            nn.Linear(10, 3)
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(3, 5),
+            nn.Linear(5, 5),
             nn.LeakyReLU(),
-            nn.Linear(5, 1)
+            nn.Linear(5, 3)
         )
 
         self.linear3 = nn.Sequential(
-            nn.Linear(9, 1)
+            nn.Linear(27, 10),
+            nn.LeakyReLU(),
+            nn.Linear(10, 1)
         )
 
     def forward(self, x):
@@ -51,13 +53,13 @@ class ANNWeighted(nn.Module):
 
         x2 = torch.cat((x_offsets, x2), dim=2)
 
-        x3 = torch.zeros((x.shape[0],9,1))
+        x3 = torch.zeros((x.shape[0],9,3))
         x3 = x3.to(self.device)
 
         for i in range(x2.shape[1]):
             x3[:,i] = self.linear2(x2[:,i])
 
-        x3 = x3.reshape(x3.shape[0],9)
+        x3 = x3.reshape(x3.shape[0],27)
         x3 = self.linear3(x3)
         return x3
 
