@@ -45,7 +45,7 @@ class ANNWeighted2(nn.Module):
         x = x.reshape(x.shape[0],9,14)
         x_bands = x[:,:,0:12]
         x_offsets = x[:,:,12:]
-        x2 = torch.zeros((x.shape[0],9,1))
+        x2 = torch.zeros((x.shape[0],9,3))
         x2 = x2.to(self.device)
 
         for i in range(x.shape[1]):
