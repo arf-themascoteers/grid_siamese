@@ -22,6 +22,7 @@ class ANNLearnableAvg(nn.Module):
         self.batch_size = 3000
         self.lr = 0.01
         self.weights = torch.Tensor([0.1,0.1,0.1,0.1,0.4,0.1,0.1,0.1,0.1])
+        self.weights = nn.Parameter(self.weights)
 
         self.linear1 = nn.Sequential(
             nn.Linear(12, 20),
