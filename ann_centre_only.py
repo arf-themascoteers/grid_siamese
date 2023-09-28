@@ -25,7 +25,7 @@ class ANNCentre(nn.Module):
         self.linear1 = nn.Sequential(
             nn.Linear(12, 20),
             nn.LeakyReLU(),
-            nn.Linear(20, 14)
+            nn.Linear(20, 12)
         )
 
         self.linear2 = nn.Sequential(

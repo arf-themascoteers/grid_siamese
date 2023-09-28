@@ -21,6 +21,7 @@ class ANNCentricAvg(nn.Module):
         self.num_epochs = 3000
         self.batch_size = 3000
         self.lr = 0.01
+        self.weights = torch.Tensor([0.1,0.1,0.1,0.1,0.4,0.1,0.1,0.1,0.1])
 
         self.linear1 = nn.Sequential(
             nn.Linear(12, 20),
@@ -42,7 +43,8 @@ class ANNCentricAvg(nn.Module):
         x2 = x2.to(self.device)
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
-        x2 = torch.mean(x2, dim=1)
+
+        x2 = (x2 * self.weights)/torch.sum(self.weights)
         x2 = self.linear2(x2)
         return x2
 
