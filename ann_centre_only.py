@@ -23,21 +23,21 @@ class ANNCentre(nn.Module):
         self.lr = 0.01
 
         self.linear1 = nn.Sequential(
-            nn.Linear(14, 20),
+            nn.Linear(12, 20),
             nn.LeakyReLU(),
             nn.Linear(20, 14)
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(14, 20),
+            nn.Linear(12, 20),
             nn.LeakyReLU(),
             nn.Linear(20, 1)
         )
 
     def forward(self, x):
         x = x[:,len(self.non_band_columns):]
-        x = x.reshape(x.shape[0],9,14)
-        x = x[:,4,:]
+        x = x.reshape(x.shape[0],9,12)
+        x = x[:,4,0:12]
         x = self.linear1(x)
         x = self.linear2(x)
         return x

@@ -7,7 +7,7 @@ from soil_dataset import SoilDataset
 from csv_processor import CSVProcessor
 
 
-class ANNTopLeft(nn.Module):
+class ANNAvg(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y):
         super().__init__()
         self.non_band_columns, self.band_columns = CSVProcessor.get_grid_columns()
@@ -37,10 +37,14 @@ class ANNTopLeft(nn.Module):
     def forward(self, x):
         x = x[:,len(self.non_band_columns):]
         x = x.reshape(x.shape[0],9,14)
-        x = x[:,0,0:12]
-        x = self.linear1(x)
-        x = self.linear2(x)
-        return x
+        x = x[:,:,0:12]
+        x2 = torch.zeros((x.shape[0],9,12))
+        x2 = x2.to(self.device)
+        for i in range(x.shape[1]):
+            x2[:,i] = self.linear1(x[:,i])
+        x2 = torch.mean(x2, dim=1)
+        x2 = self.linear2(x2)
+        return x2
 
     def train_model(self):
         if self.TEST:
