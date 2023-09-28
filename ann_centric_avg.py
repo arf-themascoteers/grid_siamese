@@ -22,6 +22,7 @@ class ANNCentricAvg(nn.Module):
         self.batch_size = 3000
         self.lr = 0.01
         self.weights = torch.Tensor([0.1,0.1,0.1,0.1,0.4,0.1,0.1,0.1,0.1])
+        self.weights = self.weights.to(device)
 
         self.linear1 = nn.Sequential(
             nn.Linear(12, 20),
@@ -44,9 +45,15 @@ class ANNCentricAvg(nn.Module):
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
 
-        x2 = (x2 * self.weights)/torch.sum(self.weights)
-        x2 = self.linear2(x2)
-        return x2
+        x3 = torch.zeros((x2.shape[0],9,12))
+        x3 = x3.to(self.device)
+        for i in range(12):
+            x3[:,:,i] = (x2[:,:,i] * self.weights)
+
+        x3 = torch.sum(x3,dim=1)/torch.sum(self.weights)
+
+        x3 = self.linear2(x3)
+        return x3
 
     def train_model(self):
         if self.TEST:

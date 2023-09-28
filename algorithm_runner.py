@@ -6,6 +6,7 @@ from ann_weighted import ANNWeighted
 from ann_weighted2 import ANNWeighted2
 from ann_weighted_position import ANNWeightedPosition
 from ann_avg import ANNAvg
+from ann_avg_skip import ANNAvgSkip
 from ann_centric_avg import ANNCentricAvg
 from ann_learnable_avg import ANNLearnableAvg
 from sklearn.linear_model import LinearRegression
@@ -68,6 +69,11 @@ class AlgorithmRunner:
         elif algorithm == "ann_learnable_avg":
             device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
             model_instance = ANNLearnableAvg(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
+            model_instance.train_model()
+            y_hats = model_instance.test()
+        elif algorithm == "ann_avg_skip":
+            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            model_instance = ANNAvgSkip(device, train_x, train_y, test_x, test_y, validation_x, validation_y)
             model_instance.train_model()
             y_hats = model_instance.test()
 

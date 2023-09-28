@@ -7,7 +7,7 @@ from soil_dataset import SoilDataset
 from csv_processor import CSVProcessor
 
 
-class ANNLearnableAvg(nn.Module):
+class ANNAvgSkip(nn.Module):
     def __init__(self, device, train_x, train_y, test_x, test_y, validation_x, validation_y):
         super().__init__()
         self.non_band_columns, self.band_columns = CSVProcessor.get_grid_columns()
@@ -21,9 +21,6 @@ class ANNLearnableAvg(nn.Module):
         self.num_epochs = 3000
         self.batch_size = 3000
         self.lr = 0.01
-        self.weights = torch.Tensor([0.1,0.1,0.1,0.1,0.4,0.1,0.1,0.1,0.1])
-        self.weights = self.weights.to(device)
-        self.weights = nn.Parameter(self.weights)
 
         self.linear1 = nn.Sequential(
             nn.Linear(12, 20),
@@ -32,7 +29,7 @@ class ANNLearnableAvg(nn.Module):
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(12, 20),
+            nn.Linear(24, 20),
             nn.LeakyReLU(),
             nn.Linear(20, 1)
         )
@@ -41,20 +38,15 @@ class ANNLearnableAvg(nn.Module):
         x = x[:,len(self.non_band_columns):]
         x = x.reshape(x.shape[0],9,14)
         x = x[:,:,0:12]
+        x_centre = x[:,4,0:12]
         x2 = torch.zeros((x.shape[0],9,12))
         x2 = x2.to(self.device)
         for i in range(x.shape[1]):
             x2[:,i] = self.linear1(x[:,i])
-
-        x3 = torch.zeros((x2.shape[0],9,12))
-        x3 = x3.to(self.device)
-        for i in range(12):
-            x3[:,:,i] = (x2[:,:,i] * self.weights)
-
-        x3 = torch.sum(x3,dim=1)/torch.sum(self.weights)
-
-        x3 = self.linear2(x3)
-        return x3
+        x2 = torch.mean(x2, dim=1)
+        x2 = torch.cat((x2,x_centre), dim=1)
+        x2 = self.linear2(x2)
+        return x2
 
     def train_model(self):
         if self.TEST:
