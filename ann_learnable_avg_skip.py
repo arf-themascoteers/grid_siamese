@@ -32,7 +32,7 @@ class ANNLearnableAvgSkip(nn.Module):
         )
 
         self.linear2 = nn.Sequential(
-            nn.Linear(12, 20),
+            nn.Linear(24, 20),
             nn.LeakyReLU(),
             nn.Linear(20, 1)
         )
@@ -41,6 +41,7 @@ class ANNLearnableAvgSkip(nn.Module):
         x = x[:,len(self.non_band_columns):]
         x = x.reshape(x.shape[0],9,14)
         x = x[:,:,0:12]
+        x_centre = x[:,4,0:12]
         x2 = torch.zeros((x.shape[0],9,12))
         x2 = x2.to(self.device)
         for i in range(x.shape[1]):
@@ -52,7 +53,7 @@ class ANNLearnableAvgSkip(nn.Module):
             x3[:,:,i] = (x2[:,:,i] * self.weights)
 
         x3 = torch.sum(x3,dim=1)/torch.sum(self.weights)
-
+        x3 = torch.cat((x3,x_centre), dim=1)
         x3 = self.linear2(x3)
         return x3
 
