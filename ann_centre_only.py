@@ -36,7 +36,7 @@ class ANNCentre(nn.Module):
 
     def forward(self, x):
         x = x[:,len(self.non_band_columns):]
-        x = x.reshape(x.shape[0],9,12)
+        x = x.reshape(x.shape[0],9,14)
         x = x[:,4,0:12]
         x = self.linear1(x)
         x = self.linear2(x)
