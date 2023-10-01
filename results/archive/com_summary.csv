@@ -1,0 +1,2 @@
+R2(ann_centre_only),R2(ann_top_left_only),RMSE(ann_centre_only),RMSE(ann_top_left_only)
+0.529,0.454,0.112,0.12
